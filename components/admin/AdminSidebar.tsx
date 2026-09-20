@@ -95,9 +95,9 @@ export function AdminSidebar({
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-bold text-sm text-white">NovaStore</span>
-                <span className="text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  Panel
+                <span className="font-bold text-sm text-white">litef</span>
+                <span className="text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  Admin
                 </span>
               </div>
               <p className="text-[10px] text-slate-400">13 Modüllü Yönetim</p>

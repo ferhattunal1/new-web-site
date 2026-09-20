@@ -8,6 +8,7 @@ import { CartDrawer } from '@/components/store/CartDrawer';
 import { CampaignBanner } from '@/components/store/CampaignBanner';
 import { Testimonials } from '@/components/store/Testimonials';
 import { StoreFooter } from '@/components/store/StoreFooter';
+import { MobileBottomNav } from '@/components/store/MobileBottomNav';
 import { INITIAL_PRODUCTS, INITIAL_REVIEWS } from '@/lib/store-data';
 import { Product, CartItem } from '@/types/database';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
@@ -96,16 +97,16 @@ export default function StoreHomePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#090d16] text-slate-100 selection:bg-indigo-500 selection:text-white">
+    <div className="flex flex-col min-h-screen bg-[#f6f7f9] text-slate-900 pb-20 md:pb-0 selection:bg-indigo-600 selection:text-white font-sans">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-2xl bg-indigo-600 text-white shadow-2xl border border-indigo-400/30 text-xs font-bold animate-fade-in">
-          <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+        <div className="fixed bottom-24 sm:bottom-6 right-4 sm:right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-2xl bg-slate-900 text-white shadow-2xl border border-slate-800 text-xs font-bold animate-fade-in">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Modern E-Ticaret Navbar */}
+      {/* Modern E-Ticaret Navbar (litef) */}
       <StoreNavbar
         cartCount={totalCartCount}
         onOpenCart={() => setIsCartOpen(true)}
@@ -116,7 +117,7 @@ export default function StoreHomePage() {
 
       {/* Main Content */}
       <main className="flex-1">
-        {/* 1. Amiral Gemisi Hero Lansman Bölümü */}
+        {/* 1. litef Amiral Gemisi Hero Lansman Bölümü */}
         <HeroLaunch
           flagshipProduct={flagshipProduct}
           onAddToCart={handleAddToCart}
@@ -142,6 +143,14 @@ export default function StoreHomePage() {
 
       {/* Modern Alt Bilgi (Footer) */}
       <StoreFooter />
+
+      {/* Mobil Yapışkan Alt Menü (Bottom Navigation) */}
+      <MobileBottomNav
+        cartCount={totalCartCount}
+        onOpenCart={() => setIsCartOpen(true)}
+        onScrollToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        onScrollToCatalog={() => scrollToSection('katalog')}
+      />
 
       {/* Sepet Çekmecesi (Slide-Over Cart Drawer) */}
       <CartDrawer

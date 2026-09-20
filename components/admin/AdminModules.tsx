@@ -125,7 +125,7 @@ export function MenusModule() {
  * ============================================================================== */
 export function LandingPagesModule() {
   const [pages, setPages] = useState([
-    { id: 1, title: 'Nova Pro X Resmi Lansmanı', slug: '/lansman-nova-pro', visits: 1240, status: 'Yayında', date: '2026-09-15' },
+    { id: 1, title: 'litef Pro X Resmi Lansmanı', slug: '/lansman-litef-pro', visits: 1240, status: 'Yayında', date: '2026-09-15' },
     { id: 2, title: 'Sonbahar Teknoloji Fırsatları', slug: '/kampanya-sonbahar', visits: 850, status: 'Yayında', date: '2026-09-18' },
     { id: 3, title: 'Aura Chrono Ön Sipariş Sayfası', slug: '/on-siparis-aura', visits: 410, status: 'Taslak', date: '2026-09-20' },
   ]);
@@ -354,7 +354,7 @@ export function CategoriesModule() {
  * ============================================================================== */
 export function QuotesModule() {
   const [quotes, setQuotes] = useState([
-    { id: 'T-101', company: 'Atlas Bilişim A.Ş.', contact: 'Ahmet Yılmaz', email: 'ahmet@atlasbilisim.com', phone: '0532 555 0192', product: 'Nova Pro X (50 Adet)', budget: '150.000 TL', status: 'Yeni' },
+    { id: 'T-101', company: 'Atlas Bilişim A.Ş.', contact: 'Ahmet Yılmaz', email: 'ahmet@atlasbilisim.com', phone: '0532 555 0192', product: 'litef Pro X (50 Adet)', budget: '150.000 TL', status: 'Yeni' },
     { id: 'T-102', company: 'Teknoloji Vadisi Ltd.', contact: 'Canan Demir', email: 'canan@tekno.com', phone: '0544 222 9011', product: 'Aura Chrono (20 Adet)', budget: '90.000 TL', status: 'İnceleniyor' },
     { id: 'T-103', company: 'Global Çözümler', contact: 'Serdar Kaya', email: 'serdar@global.com', phone: '0555 111 4433', product: 'Vortex XR Gözlük (10 Adet)', budget: '120.000 TL', status: 'Teklif Verildi' },
   ]);
@@ -420,7 +420,7 @@ export function QuotesModule() {
  * ============================================================================== */
 export function PriceListModule() {
   const [items] = useState([
-    { sku: 'NOV-01', name: 'Nova Pro X Wireless', retail: 3499, wholesale: 2650, margin: '%32' },
+    { sku: 'LTF-01', name: 'litef Pro X Wireless', retail: 3499, wholesale: 2650, margin: '%32' },
     { sku: 'AUR-02', name: 'Aura Chrono Ultra', retail: 4999, wholesale: 3800, margin: '%31' },
     { sku: 'VRX-03', name: 'Vortex Vision XR', retail: 12899, wholesale: 9900, margin: '%30' },
     { sku: 'SNC-04', name: 'SonicPulse Studio', retail: 2199, wholesale: 1650, margin: '%33' },
@@ -484,7 +484,7 @@ export function FaqModule() {
   const [faqs, setFaqs] = useState([
     { id: 1, question: 'Siparişim ne zaman kargoya verilir?', answer: 'Hafta içi saat 16:00\'a kadar verilen siparişler aynı gün anlaşmalı kargo ile ücretsiz yola çıkar.', category: 'Kargo & Teslimat' },
     { id: 2, question: 'İade ve değişim süreci nasıl işler?', answer: 'Ürünü teslim aldığınız tarihten itibaren 30 gün içinde koşulsuz ücretsiz iade edebilirsiniz.', category: 'İade' },
-    { id: 3, question: 'Nova Pro X kulaklık su geçirir mi?', answer: 'Evet, IPX5 suya ve tere dayanıklılık sertifikasına sahiptir. Yağmur altında ve sporda güvenle kullanabilirsiniz.', category: 'Ürün Özellikleri' },
+    { id: 3, question: 'litef Pro X kulaklık su geçirir mi?', answer: 'Evet, IPX5 suya ve tere dayanıklılık sertifikasına sahiptir. Yağmur altında ve sporda güvenle kullanabilirsiniz.', category: 'Ürün Özellikleri' },
   ]);
   const [qText, setQText] = useState('');
   const [aText, setAText] = useState('');
@@ -549,7 +549,7 @@ export function FaqModule() {
  * ============================================================================== */
 export function FileManagerModule() {
   const [files, setFiles] = useState([
-    { id: 1, name: 'nova-pro-x-banner.webp', size: '240 KB', type: 'Görsel', date: '2026-09-18', url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e' },
+    { id: 1, name: 'litef-pro-x-banner.webp', size: '240 KB', type: 'Görsel', date: '2026-09-18', url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e' },
     { id: 2, name: 'aura-chrono-catalogue.pdf', size: '2.4 MB', type: 'PDF Doküman', date: '2026-09-19', url: '#' },
     { id: 3, name: 'vortex-vision-specsheet.pdf', size: '1.8 MB', type: 'PDF Doküman', date: '2026-09-20', url: '#' },
     { id: 4, name: 'brand-logo-white.svg', size: '18 KB', type: 'Vektör', date: '2026-09-15', url: '#' },
@@ -608,9 +608,9 @@ export function FileManagerModule() {
  * ============================================================================== */
 export function UsersModule() {
   const [users, setUsers] = useState([
-    { id: 1, name: 'Sistem Yöneticisi', email: 'admin@novastore.com', role: 'Süper Admin', status: 'Aktif', lastLogin: 'Az önce' },
-    { id: 2, name: 'Ferhat Tunal', email: 'ferhat@novastore.com', role: 'Yönetici (Admin)', status: 'Aktif', lastLogin: '1 saat önce' },
-    { id: 3, name: 'İçerik Editörü', email: 'editor@novastore.com', role: 'Editör', status: 'Aktif', lastLogin: '1 gün önce' },
+    { id: 1, name: 'Sistem Yöneticisi', email: 'admin@litef.com', role: 'Süper Admin', status: 'Aktif', lastLogin: 'Az önce' },
+    { id: 2, name: 'Ferhat Tunal', email: 'ferhat@litef.com', role: 'Yönetici (Admin)', status: 'Aktif', lastLogin: '1 saat önce' },
+    { id: 3, name: 'İçerik Editörü', email: 'editor@litef.com', role: 'Editör', status: 'Aktif', lastLogin: '1 gün önce' },
   ]);
 
   const handleAddUser = () => {

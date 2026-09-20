@@ -5,7 +5,7 @@ export const ADMIN_CREDENTIALS = {
   role: 'Süper Admin',
 };
 
-const STORAGE_KEY = 'novastore_admin_session';
+const STORAGE_KEY = 'litef_admin_session';
 
 export function isAuthenticated(): boolean {
   if (typeof window === 'undefined') return false;
@@ -21,8 +21,10 @@ export function isAuthenticated(): boolean {
 
 export function loginAdmin(username: string, password: string): { success: boolean; message?: string } {
   if (
-    (username.trim() === ADMIN_CREDENTIALS.username || username.trim() === 'admin@novastore.com') &&
-    password.trim() === ADMIN_CREDENTIALS.password
+    (username.trim() === ADMIN_CREDENTIALS.username || 
+     username.trim() === 'admin@litef.com' || 
+     username.trim() === 'admin@novastore.com') &&
+    password === ADMIN_CREDENTIALS.password
   ) {
     if (typeof window !== 'undefined') {
       localStorage.setItem(

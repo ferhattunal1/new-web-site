@@ -110,7 +110,7 @@ export function ProductAdmin({
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Örn: Nova Buds Air"
+                placeholder="Örn: litef Buds Air"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
               />
             </div>

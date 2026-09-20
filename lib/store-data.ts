@@ -3,7 +3,7 @@ import { Product, Review } from '@/types/database';
 export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'prod-1',
-    name: 'Nova Pro X Wireless Kulaklık',
+    name: 'litef Pro X Wireless Kulaklık',
     description: 'Hibrit Aktif Gürültü Engelleme (ANC), 48 saat pil ömrü, uzamsal ses ve 40mm berilyum sürücüler.',
     price: 3499,
     original_price: 4899,
@@ -100,8 +100,8 @@ export const INITIAL_REVIEWS: Review[] = [
     avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
     rating: 5,
     date: '2 gün önce',
-    comment: 'Nova Pro X kulaklığı lansman gününde aldım. Gürültü engellemesi uçakta denedim, dünya sesini sıfıra indiriyor. Malzeme kalitesi inanılmaz.',
-    product_name: 'Nova Pro X Wireless',
+    comment: 'litef Pro X kulaklığı lansman gününde aldım. Gürültü engellemesi uçakta denedim, dünya sesini sıfıra indiriyor. Malzeme kalitesi inanılmaz.',
+    product_name: 'litef Pro X Wireless',
   },
   {
     id: 'rev-2',

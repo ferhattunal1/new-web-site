@@ -1,14 +1,23 @@
+@import url('https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Regular.min.css');
+@import url('https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css');
+@import url('https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css');
+@import url('https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Bold.min.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: #090d16;
-    --foreground: #f8fafc;
-    --card: rgba(15, 23, 42, 0.7);
-    --card-hover: rgba(30, 41, 59, 0.8);
-    --border: rgba(255, 255, 255, 0.08);
+    --background: #f6f7f9;
+    --foreground: #0f172a;
+    --card: #ffffff;
+    --card-hover: #fafbfc;
+    --border: rgba(0, 0, 0, 0.08);
+  }
+
+  * {
+    font-family: 'MiSans Latin', 'MiSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
   body {
@@ -17,66 +26,61 @@
     min-height: 100vh;
     overflow-x: hidden;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-family: 'MiSans Latin', 'MiSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }
 
-/* Glassmorphism Styles */
+/* Kirli Beyaz / Açık Tema Cam Efektleri (Light Glassmorphism) */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
 }
 
 .glass-panel-interactive {
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-panel-interactive:hover {
-  background: rgba(30, 41, 59, 0.75);
+  background: #ffffff;
   border-color: rgba(99, 102, 241, 0.35);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 16px 32px -8px rgba(99, 102, 241, 0.12);
 }
 
-/* Custom modern scrollbar */
+/* Özel kaydırma çubuğu */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: #f1f3f6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #94a3b8;
 }
 
-/* Gradient text utility */
-.gradient-text {
-  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
+/* Degrade metinler */
 .gradient-brand {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #d946ef 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.gradient-cyan {
-  background: linear-gradient(135deg, #38bdf8 0%, #06b6d4 50%, #10b981 100%);
+.gradient-dark {
+  background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
