@@ -1,24 +1,12 @@
-import { type NextRequest } from 'next/server';
-import { updateSession } from '@/lib/supabase/middleware';
+import { NextResponse, type NextRequest } from 'next/server';
 
-export async function middleware(request: NextRequest) {
-  try {
-    return await updateSession(request);
-  } catch {
-    const { NextResponse } = await import('next/server');
-    return NextResponse.next({ request });
-  }
+export function middleware(request: NextRequest) {
+  // Basit ve hızlı geçiş - sayfa erişimlerini bloklamaz
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Aşağıdaki yollar dışındaki tüm isteklerde middleware'i çalıştır:
-     * - _next/static (statik dosyalar)
-     * - _next/image (görsel optimizasyonu)
-     * - favicon.ico (ikon)
-     * - svg, png, jpg, jpeg, gif, webp gibi statik dosyalar
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
