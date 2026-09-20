@@ -6,6 +6,37 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  original_price: number | null;
+  rating: number;
+  reviews_count: number;
+  category: string;
+  image_url: string;
+  badge: string | null;
+  in_stock: boolean;
+  featured: boolean;
+  created_at: string;
+}
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
+}
+
+export interface Review {
+  id: string;
+  author: string;
+  avatar: string;
+  rating: number;
+  date: string;
+  comment: string;
+  product_name: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -30,6 +61,12 @@ export interface Task {
 export type Database = {
   public: {
     Tables: {
+      products: {
+        Row: Product;
+        Insert: Omit<Product, 'id' | 'created_at'> & { id?: string; created_at?: string };
+        Update: Partial<Product>;
+        Relationships: [];
+      };
       projects: {
         Row: {
           id: string;

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AdminSidebar, AdminTab } from '@/components/admin/AdminSidebar';
+import { ProductAdmin } from '@/components/admin/ProductAdmin';
 import { ProjectManagement } from '@/components/admin/ProjectManagement';
 import { SystemHealth } from '@/components/admin/SystemHealth';
 import { ActivityLogs } from '@/components/admin/ActivityLogs';
@@ -10,14 +11,16 @@ import { TaskManager } from '@/components/TaskManager';
 import { NewTaskModal } from '@/components/NewTaskModal';
 import { SqlGuideModal } from '@/components/SqlGuideModal';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
+import { INITIAL_PRODUCTS } from '@/lib/store-data';
 import { INITIAL_PROJECTS, INITIAL_TASKS } from '@/lib/supabase/mock-data';
-import { Project, Task } from '@/types/database';
+import { Product, Project, Task } from '@/types/database';
 import { 
   Menu, 
   ArrowLeft, 
   Plus, 
   Code2, 
   CheckCircle2, 
+  Package, 
   FolderKanban, 
   CheckSquare, 
   Database, 
@@ -25,13 +28,15 @@ import {
   Sparkles,
   TrendingUp,
   ShieldAlert,
-  Server
+  Server,
+  DollarSign
 } from 'lucide-react';
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [isMobileOpen, setIsMobileOpen] = useState<boolean>(false);
   const [isConfigured, setIsConfigured] = useState<boolean>(false);
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
   const [tasks, setTasks] = useState<Task[]>(INITIAL_TASKS);
   const [isNewTaskOpen, setIsNewTaskOpen] = useState<boolean>(false);
@@ -46,6 +51,18 @@ export default function AdminPage() {
       if (configured) {
         try {
           const supabase = createClient();
+
+          // Ürünleri Çek
+          const { data: prodData } = await supabase
+            .from('products')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+          if (prodData && prodData.length > 0) {
+            setProducts(prodData as Product[]);
+          }
+
+          // Projeleri Çek
           const { data: projData } = await supabase
             .from('projects')
             .select('*')
@@ -55,6 +72,7 @@ export default function AdminPage() {
             setProjects(projData as Project[]);
           }
 
+          // Görevleri Çek
           const { data: taskData } = await supabase
             .from('tasks')
             .select('*')
@@ -77,150 +95,123 @@ export default function AdminPage() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Proje Ekleme
-  const handleAddProject = async (newProj: Omit<Project, 'id' | 'created_at'>) => {
+  // Ürün Ekleme
+  const handleAddProduct = async (newProd: Omit<Product, 'id' | 'created_at'>) => {
     if (isConfigured) {
       try {
         const supabase = createClient();
         const { data, error } = await supabase
-          .from('projects')
-          .insert([newProj])
+          .from('products')
+          .insert([newProd])
           .select()
           .single();
 
         if (error) throw error;
         if (data) {
-          setProjects((prev) => [data as Project, ...prev]);
-          showToast('Proje Supabase veritabanına eklendi.');
+          setProducts((prev) => [data as Product, ...prev]);
+          showToast('Ürün Supabase veritabanına eklendi!');
         }
-      } catch (e) {
-        console.error('Project insert error:', e);
-        const fallbackProj: Project = {
-          ...newProj,
-          id: `proj-${Date.now()}`,
+      } catch {
+        const fallback: Product = {
+          ...newProd,
+          id: `prod-${Date.now()}`,
           created_at: new Date().toISOString(),
         };
-        setProjects((prev) => [fallbackProj, ...prev]);
-        showToast('Yerel listeye eklendi.');
+        setProducts((prev) => [fallback, ...prev]);
+        showToast('Ürün vitrine eklendi.');
       }
     } else {
-      const fallbackProj: Project = {
-        ...newProj,
-        id: `proj-${Date.now()}`,
+      const fallback: Product = {
+        ...newProd,
+        id: `prod-${Date.now()}`,
         created_at: new Date().toISOString(),
       };
-      setProjects((prev) => [fallbackProj, ...prev]);
-      showToast('Proje demo listesine eklendi.');
+      setProducts((prev) => [fallback, ...prev]);
+      showToast('Ürün vitrine eklendi (Demo Modu).');
     }
   };
 
-  // Proje Silme
-  const handleDeleteProject = async (projectId: string) => {
-    setProjects((prev) => prev.filter((p) => p.id !== projectId));
-    setTasks((prev) => prev.filter((t) => t.project_id !== projectId));
+  // Ürün Silme
+  const handleDeleteProduct = async (productId: string) => {
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
+    if (isConfigured) {
+      try {
+        const supabase = createClient();
+        await supabase.from('products').delete().eq('id', productId);
+        showToast('Ürün veritabanından silindi.');
+      } catch (e) {
+        console.error('Product delete error:', e);
+      }
+    } else {
+      showToast('Ürün vitrinden kaldırıldı.');
+    }
+  };
+
+  // Stok Durumu Değiştirme
+  const handleToggleStock = async (productId: string, currentStock: boolean) => {
+    const updated = !currentStock;
+    setProducts((prev) =>
+      prev.map((p) => (p.id === productId ? { ...p, in_stock: updated } : p))
+    );
 
     if (isConfigured) {
       try {
         const supabase = createClient();
-        await supabase.from('projects').delete().eq('id', projectId);
-        showToast('Proje Supabase veritabanından silindi.');
+        await supabase.from('products').update({ in_stock: updated }).eq('id', productId);
+        showToast('Stok durumu güncellendi.');
       } catch (e) {
-        console.error('Project delete error:', e);
+        console.error('Stock update error:', e);
       }
-    } else {
-      showToast('Proje silindi (Demo Modu).');
     }
   };
 
-  // Proje Durumu Güncelleme
+  // Proje Ekleme
+  const handleAddProject = async (newProj: Omit<Project, 'id' | 'created_at'>) => {
+    const fallbackProj: Project = {
+      ...newProj,
+      id: `proj-${Date.now()}`,
+      created_at: new Date().toISOString(),
+    };
+    setProjects((prev) => [fallbackProj, ...prev]);
+    showToast('Proje listeye eklendi.');
+  };
+
+  const handleDeleteProject = async (projectId: string) => {
+    setProjects((prev) => prev.filter((p) => p.id !== projectId));
+    showToast('Proje silindi.');
+  };
+
   const handleUpdateProjectStatus = async (projectId: string, status: Project['status']) => {
     setProjects((prev) =>
       prev.map((p) => (p.id === projectId ? { ...p, status } : p))
     );
-
-    if (isConfigured) {
-      try {
-        const supabase = createClient();
-        await supabase.from('projects').update({ status }).eq('id', projectId);
-        showToast('Proje durumu güncellendi.');
-      } catch (e) {
-        console.error('Project status update error:', e);
-      }
-    }
+    showToast('Proje durumu güncellendi.');
   };
 
   // Görev Ekleme
   const handleAddTask = async (newTaskData: Omit<Task, 'id' | 'created_at' | 'project'>) => {
-    if (isConfigured) {
-      try {
-        const supabase = createClient();
-        const { data, error } = await supabase
-          .from('tasks')
-          .insert([newTaskData])
-          .select()
-          .single();
-
-        if (error) throw error;
-        if (data) {
-          setTasks((prev) => [data as Task, ...prev]);
-          showToast('Görev canlı veritabanına kaydedildi.');
-        }
-      } catch {
-        const demoTask: Task = {
-          ...newTaskData,
-          id: `task-${Date.now()}`,
-          created_at: new Date().toISOString(),
-        };
-        setTasks((prev) => [demoTask, ...prev]);
-        showToast('Görev listeye eklendi.');
-      }
-    } else {
-      const demoTask: Task = {
-        ...newTaskData,
-        id: `demo-${Date.now()}`,
-        created_at: new Date().toISOString(),
-      };
-      setTasks((prev) => [demoTask, ...prev]);
-      showToast('Görev eklendi (Demo Modu).');
-    }
+    const demoTask: Task = {
+      ...newTaskData,
+      id: `task-${Date.now()}`,
+      created_at: new Date().toISOString(),
+    };
+    setTasks((prev) => [demoTask, ...prev]);
+    showToast('Görev eklendi.');
   };
 
-  // Görev Durumu Değiştirme
   const handleUpdateTaskStatus = async (taskId: string, newStatus: Task['status']) => {
     setTasks((prev) =>
       prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
     );
-
-    if (isConfigured) {
-      try {
-        const supabase = createClient();
-        await supabase.from('tasks').update({ status: newStatus }).eq('id', taskId);
-        showToast('Görev durumu güncellendi.');
-      } catch (e) {
-        console.error('Task update error:', e);
-      }
-    }
   };
 
-  // Görev Silme
   const handleDeleteTask = async (taskId: string) => {
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
-    if (isConfigured) {
-      try {
-        const supabase = createClient();
-        await supabase.from('tasks').delete().eq('id', taskId);
-        showToast('Görev silindi.');
-      } catch (e) {
-        console.error('Task delete error:', e);
-      }
-    }
+    showToast('Görev silindi.');
   };
 
-  // Metrikler
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter((t) => t.status === 'done').length;
-  const inProgressTasks = tasks.filter((t) => t.status === 'in_progress').length;
-  const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  const inStockCount = products.filter((p) => p.in_stock).length;
+  const totalInventoryValue = products.reduce((sum, p) => sum + p.price, 0);
 
   return (
     <div className="flex min-h-screen">
@@ -238,6 +229,7 @@ export default function AdminPage() {
         onTabChange={setActiveTab}
         isOpenMobile={isMobileOpen}
         onCloseMobile={() => setIsMobileOpen(false)}
+        productCount={products.length}
         projectCount={projects.length}
         taskCount={tasks.length}
       />
@@ -256,15 +248,16 @@ export default function AdminPage() {
 
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-white">
-                {activeTab === 'overview' && 'Genel Bakış & Metrikler'}
-                {activeTab === 'projects' && 'Proje Yönetimi'}
+                {activeTab === 'overview' && 'Mağaza Genel Bakış & Metrikler'}
+                {activeTab === 'products' && 'Ürün Kataloğu Yönetimi'}
+                {activeTab === 'projects' && 'Proje & Çalışma Alanı'}
                 {activeTab === 'tasks' && 'Görev Denetimi'}
                 {activeTab === 'system' && 'Sistem & Supabase'}
                 {activeTab === 'logs' && 'Aktivite Günlüğü'}
               </span>
 
               <span className="hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-white/5">
-                v1.2 Admin Console
+                NovaStore Console
               </span>
             </div>
           </div>
@@ -278,20 +271,12 @@ export default function AdminPage() {
               <span>SQL Şeması</span>
             </button>
 
-            <button
-              onClick={() => setIsNewTaskOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-all active:scale-95"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Hızlı Görev</span>
-            </button>
-
             <Link
               href="/"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white border border-white/10 hover:bg-white/5 transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium text-slate-200 hover:text-white bg-indigo-600 hover:bg-indigo-500 shadow-sm transition-all"
             >
-              <ArrowLeft className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="hidden sm:inline">Siteye Dön</span>
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Mağazaya Git</span>
             </Link>
           </div>
         </header>
@@ -305,29 +290,31 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="glass-panel rounded-2xl p-5 space-y-2">
                   <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-xs font-medium">Toplam Proje</span>
-                    <FolderKanban className="w-4 h-4 text-indigo-400" />
+                    <span className="text-xs font-medium">Toplam Ürün</span>
+                    <Package className="w-4 h-4 text-indigo-400" />
                   </div>
-                  <div className="text-2xl font-bold text-white">{projects.length}</div>
-                  <p className="text-[11px] text-slate-400">Aktif çalışma alanları</p>
+                  <div className="text-2xl font-bold text-white">{products.length}</div>
+                  <p className="text-[11px] text-emerald-400">{inStockCount} ürün aktif stokta</p>
                 </div>
 
                 <div className="glass-panel rounded-2xl p-5 space-y-2">
                   <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-xs font-medium">Devam Eden Görev</span>
-                    <TrendingUp className="w-4 h-4 text-cyan-400" />
+                    <span className="text-xs font-medium">Katalog Değeri</span>
+                    <DollarSign className="w-4 h-4 text-cyan-400" />
                   </div>
-                  <div className="text-2xl font-bold text-white">{inProgressTasks}</div>
-                  <p className="text-[11px] text-slate-400">İşlemdeki sprint maddeleri</p>
+                  <div className="text-2xl font-bold text-white">
+                    {totalInventoryValue.toLocaleString('tr-TR')} TL
+                  </div>
+                  <p className="text-[11px] text-slate-400">Toplam ürün portföyü</p>
                 </div>
 
                 <div className="glass-panel rounded-2xl p-5 space-y-2">
                   <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-xs font-medium">Tamamlanma Oranı</span>
+                    <span className="text-xs font-medium">Aktif Sprint Görevleri</span>
                     <CheckSquare className="w-4 h-4 text-emerald-400" />
                   </div>
-                  <div className="text-2xl font-bold text-white">%{completionRate}</div>
-                  <p className="text-[11px] text-slate-400">{completedTasks} / {totalTasks} tamamlandı</p>
+                  <div className="text-2xl font-bold text-white">{tasks.length}</div>
+                  <p className="text-[11px] text-slate-400">İşlem ve teslimat maddeleri</p>
                 </div>
 
                 <div className="glass-panel rounded-2xl p-5 space-y-2">
@@ -342,24 +329,24 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Quick Actions & Navigation Bar */}
+              {/* Quick Actions */}
               <div className="p-6 rounded-2xl glass-panel border border-indigo-500/20 bg-slate-900/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <h3 className="text-base font-semibold text-white flex items-center gap-2">
                     <ShieldAlert className="w-4 h-4 text-indigo-400" />
-                    <span>Yönetici Hızlı Aksiyonları</span>
+                    <span>Hızlı Yönetim Aksiyonları</span>
                   </h3>
                   <p className="text-xs text-slate-400">
-                    Projelerinizi yönetebilir, görev durumlarını topluca denetleyebilir veya veritabanı yedeği alabilirsiniz.
+                    Vitrindeki ürünleri güncelleyebilir, yeni ürün ekleyebilir veya veritabanı yedeği alabilirsiniz.
                   </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5">
                   <button
-                    onClick={() => setActiveTab('projects')}
-                    className="px-3.5 py-2 rounded-xl text-xs font-medium bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-all"
+                    onClick={() => setActiveTab('products')}
+                    className="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-all"
                   >
-                    Projeleri Yönet
+                    Ürün Kataloğunu Yönet
                   </button>
                   <button
                     onClick={() => setActiveTab('system')}
@@ -370,74 +357,53 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Projects Preview & Activity stream */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="glass-panel rounded-2xl p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-white">Son Eklenen Projeler</h3>
-                    <button
-                      onClick={() => setActiveTab('projects')}
-                      className="text-xs text-indigo-400 hover:underline"
-                    >
-                      Tümünü Gör
-                    </button>
-                  </div>
-                  <div className="space-y-3">
-                    {projects.slice(0, 3).map((p) => (
-                      <div
-                        key={p.id}
-                        className="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-white/5"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: p.color || '#6366f1' }}
-                          />
-                          <div>
-                            <p className="text-xs font-semibold text-white">{p.name}</p>
-                            <p className="text-[11px] text-slate-400 line-clamp-1">{p.description}</p>
-                          </div>
-                        </div>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 uppercase">
-                          {p.status}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+              {/* Products Preview */}
+              <div className="glass-panel rounded-2xl p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-white">Vitrindeki Ürünler</h3>
+                  <button
+                    onClick={() => setActiveTab('products')}
+                    className="text-xs text-indigo-400 hover:underline"
+                  >
+                    Tümünü Yönet
+                  </button>
                 </div>
-
-                <div className="glass-panel rounded-2xl p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-white">Sistem Faaliyetleri</h3>
-                    <button
-                      onClick={() => setActiveTab('logs')}
-                      className="text-xs text-indigo-400 hover:underline"
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {products.slice(0, 3).map((p) => (
+                    <div
+                      key={p.id}
+                      className="p-4 rounded-xl bg-slate-900/80 border border-white/5 flex items-center gap-3"
                     >
-                      Tüm Günlükler
-                    </button>
-                  </div>
-                  <div className="space-y-3">
-                    {tasks.slice(0, 3).map((t) => (
-                      <div
-                        key={t.id}
-                        className="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-white/5"
-                      >
-                        <div>
-                          <p className="text-xs font-semibold text-white">{t.title}</p>
-                          <p className="text-[11px] text-slate-400">Durum: {t.status}</p>
-                        </div>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                          {t.priority}
-                        </span>
+                      <img
+                        src={p.image_url}
+                        alt={p.name}
+                        className="w-12 h-12 rounded-lg object-cover bg-slate-950 shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-white truncate">{p.name}</p>
+                        <p className="text-[11px] text-indigo-400 font-semibold">
+                          {p.price.toLocaleString('tr-TR')} TL
+                        </p>
+                        <span className="text-[9px] text-slate-400">{p.category}</span>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           )}
 
-          {/* TAB 2: PROJECTS */}
+          {/* TAB 2: PRODUCTS */}
+          {activeTab === 'products' && (
+            <ProductAdmin
+              products={products}
+              onAddProduct={handleAddProduct}
+              onDeleteProduct={handleDeleteProduct}
+              onToggleStock={handleToggleStock}
+            />
+          )}
+
+          {/* TAB 3: PROJECTS */}
           {activeTab === 'projects' && (
             <ProjectManagement
               projects={projects}
@@ -449,7 +415,7 @@ export default function AdminPage() {
             />
           )}
 
-          {/* TAB 3: TASKS */}
+          {/* TAB 4: TASKS */}
           {activeTab === 'tasks' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -472,7 +438,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* TAB 4: SYSTEM */}
+          {/* TAB 5: SYSTEM */}
           {activeTab === 'system' && (
             <SystemHealth
               projects={projects}
@@ -481,7 +447,7 @@ export default function AdminPage() {
             />
           )}
 
-          {/* TAB 5: LOGS */}
+          {/* TAB 6: LOGS */}
           {activeTab === 'logs' && (
             <ActivityLogs
               projects={projects}

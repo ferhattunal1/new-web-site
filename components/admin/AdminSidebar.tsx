@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { 
   LayoutDashboard, 
+  Package, 
   FolderKanban, 
   CheckSquare, 
   Database, 
@@ -14,13 +15,14 @@ import {
   X
 } from 'lucide-react';
 
-export type AdminTab = 'overview' | 'projects' | 'tasks' | 'system' | 'logs';
+export type AdminTab = 'overview' | 'products' | 'projects' | 'tasks' | 'system' | 'logs';
 
 interface AdminSidebarProps {
   activeTab: AdminTab;
   onTabChange: (tab: AdminTab) => void;
   isOpenMobile: boolean;
   onCloseMobile: () => void;
+  productCount: number;
   projectCount: number;
   taskCount: number;
 }
@@ -30,6 +32,7 @@ export function AdminSidebar({
   onTabChange,
   isOpenMobile,
   onCloseMobile,
+  productCount,
   projectCount,
   taskCount,
 }: AdminSidebarProps) {
@@ -41,8 +44,14 @@ export function AdminSidebar({
       badge: null,
     },
     {
+      id: 'products' as AdminTab,
+      label: 'Ürün Kataloğu',
+      icon: Package,
+      badge: productCount,
+    },
+    {
       id: 'projects' as AdminTab,
-      label: 'Proje Yönetimi',
+      label: 'Proje & Çalışma Alanı',
       icon: FolderKanban,
       badge: projectCount,
     },
@@ -90,12 +99,12 @@ export function AdminSidebar({
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-bold text-sm tracking-tight text-white">NexusHub</span>
+                <span className="font-bold text-sm tracking-tight text-white">NovaStore</span>
                 <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
                   Admin
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400">Yönetim Paneli</p>
+              <p className="text-[11px] text-slate-400">Yönetim Konsolu</p>
             </div>
           </div>
           <button
@@ -158,9 +167,9 @@ export function AdminSidebar({
           >
             <div className="flex items-center gap-2">
               <ArrowLeft className="w-4 h-4 text-indigo-400" />
-              <span>Ana Siteye Dön</span>
+              <span>Mağazaya Dön</span>
             </div>
-            <span className="text-[10px] text-slate-500">Live Hub</span>
+            <span className="text-[10px] text-slate-500">Vitrin</span>
           </Link>
 
           {/* Admin User Status */}
@@ -172,7 +181,7 @@ export function AdminSidebar({
               <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#090d16]" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-white truncate">Sistem Yöneticisi</p>
+              <p className="text-xs font-medium text-white truncate">Mağaza Yöneticisi</p>
               <p className="text-[10px] text-emerald-400 truncate">Süper Yetkili</p>
             </div>
           </div>
