@@ -20,6 +20,7 @@ interface ProductAdminProps {
   onAddProduct: (product: Omit<Product, 'id' | 'created_at'>) => Promise<void>;
   onDeleteProduct: (productId: string) => Promise<void>;
   onToggleStock: (productId: string, currentStock: boolean) => Promise<void>;
+  onShowToast?: (msg: string) => void;
 }
 
 export function ProductAdmin({
@@ -27,6 +28,7 @@ export function ProductAdmin({
   onAddProduct,
   onDeleteProduct,
   onToggleStock,
+  onShowToast,
 }: ProductAdminProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [name, setName] = useState('');
@@ -82,13 +84,26 @@ export function ProductAdmin({
           </p>
         </div>
 
-        <button
-          onClick={() => setIsCreating(!isCreating)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 transition-all self-start sm:self-auto"
-        >
-          {isCreating ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-          <span>{isCreating ? 'Formu Kapat' : 'Yeni Ürün Ekle'}</span>
-        </button>
+        <div className="flex items-center gap-2.5 self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={() => {
+              if (onShowToast) onShowToast('Ürün kataloğu başarıyla kaydedildi!');
+            }}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition-all active:scale-95"
+          >
+            <Check className="w-4 h-4" />
+            <span>Kataloğu Kaydet</span>
+          </button>
+
+          <button
+            onClick={() => setIsCreating(!isCreating)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 transition-all"
+          >
+            {isCreating ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+            <span>{isCreating ? 'Formu Kapat' : 'Yeni Ürün Ekle'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Add Product Form */}

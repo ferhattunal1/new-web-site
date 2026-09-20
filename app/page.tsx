@@ -14,14 +14,26 @@ import { Product, CartItem } from '@/types/database';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { CheckCircle2 } from 'lucide-react';
 
+import { 
+  ADMIN_STORAGE_KEYS, 
+  loadAdminData, 
+  SiteSettings, 
+  DEFAULT_SITE_SETTINGS 
+} from '@/lib/admin-storage';
+
 export default function StoreHomePage() {
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Supabase'den Canlı Ürünleri Çek
+  // Admin Storage ve Supabase'den Canlı Ürünleri Çek
   useEffect(() => {
+    // 1. Önce Admin panelinde kaydedilen ürünleri yükle
+    const savedProducts = loadAdminData<Product[]>(ADMIN_STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+    setProducts(savedProducts);
+
+    // 2. Supabase yapılandırılmışsa veritabanından çek
     const fetchLiveProducts = async () => {
       if (isSupabaseConfigured()) {
         try {
