@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { 
   Database, 
   Layers, 
@@ -11,7 +12,8 @@ import {
   Menu, 
   X,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  ShieldAlert
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -43,7 +45,7 @@ export function Navbar({ isConfigured, onOpenSqlGuide, onOpenNewTaskModal }: Nav
                   Next.js + Supabase
                 </span>
               </div>
-              <p className="text-xs text-slate-400 hidden sm:block">Modern App Router & Veritabanı Portalı</p>
+              <p className="text-xs text-slate-400 hidden sm:block">Modern App Router &amp; Veritabanı Portalı</p>
             </div>
           </div>
 
@@ -70,6 +72,15 @@ export function Navbar({ isConfigured, onOpenSqlGuide, onOpenNewTaskModal }: Nav
               )}
             </div>
 
+            {/* Admin Panel Link */}
+            <Link
+              href="/admin"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-amber-300 hover:text-white bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-all shadow-sm"
+            >
+              <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+              <span>Admin Paneli</span>
+            </Link>
+
             {/* SQL Guide Button */}
             <button
               onClick={onOpenSqlGuide}
@@ -78,17 +89,6 @@ export function Navbar({ isConfigured, onOpenSqlGuide, onOpenNewTaskModal }: Nav
               <Code2 className="w-3.5 h-3.5 text-indigo-400" />
               <span>SQL Şeması</span>
             </button>
-
-            {/* Supabase Docs */}
-            <a
-              href="https://supabase.com/docs"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors"
-            >
-              <span>Dokümanlar</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
 
             {/* Create Task Button */}
             <button
@@ -102,6 +102,13 @@ export function Navbar({ isConfigured, onOpenSqlGuide, onOpenNewTaskModal }: Nav
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-2">
+            <Link
+              href="/admin"
+              className="p-2 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs font-medium flex items-center gap-1"
+            >
+              <ShieldAlert className="w-4 h-4" />
+              <span>Admin</span>
+            </Link>
             <button
               onClick={onOpenNewTaskModal}
               className="p-2 rounded-lg bg-indigo-600 text-white shadow-md active:scale-95"
@@ -135,6 +142,18 @@ export function Navbar({ isConfigured, onOpenSqlGuide, onOpenNewTaskModal }: Nav
           </div>
 
           <div className="flex flex-col gap-2">
+            <Link
+              href="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-semibold text-amber-300 bg-amber-500/15 border border-amber-500/30"
+            >
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-amber-400" />
+                <span>Admin Yönetim Paneli</span>
+              </div>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-amber-400/20">Aç</span>
+            </Link>
+
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
