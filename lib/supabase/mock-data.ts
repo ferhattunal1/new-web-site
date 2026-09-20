@@ -1,0 +1,81 @@
+import { Project, Task } from '@/types/database';
+
+export const INITIAL_PROJECTS: Project[] = [
+  {
+    id: '11111111-1111-1111-1111-111111111111',
+    name: 'Modern E-Ticaret Arayüzü',
+    description: 'Next.js App Router ve Tailwind ile yeni nesil alışveriş deneyimi',
+    color: '#6366f1',
+    status: 'active',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '22222222-2222-2222-2222-222222222222',
+    name: 'Supabase Veritabanı Entegrasyonu',
+    description: 'Gerçek zamanlı abonelikler ve RLS güvenlik kuralları',
+    color: '#06b6d4',
+    status: 'active',
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: '33333333-3333-3333-3333-333333333333',
+    name: 'Mobil Uygulama v2',
+    description: 'React Native ve API senkronizasyonu',
+    color: '#10b981',
+    status: 'completed',
+    created_at: new Date(Date.now() - 172800000).toISOString(),
+  },
+];
+
+export const INITIAL_TASKS: Task[] = [
+  {
+    id: 't-1',
+    project_id: '11111111-1111-1111-1111-111111111111',
+    title: 'Tailwind CSS Tasarım Sistemini Tamamla',
+    description: 'Renk paletleri, kartlar, buton bileşenleri ve cam efekti hazırlandı.',
+    status: 'done',
+    priority: 'high',
+    due_date: new Date().toISOString().split('T')[0],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 't-2',
+    project_id: '11111111-1111-1111-1111-111111111111',
+    title: 'Duyarlı Navbar ve Mobil Menü',
+    description: 'Mobil görünümde animasyonlu menü çekmecesi ve tema geçişleri test edilecek.',
+    status: 'in_progress',
+    priority: 'urgent',
+    due_date: new Date(Date.now() + 172800000).toISOString().split('T')[0],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 't-3',
+    project_id: '22222222-2222-2222-2222-222222222222',
+    title: 'Supabase Client ve Server İstemcileri',
+    description: 'App Router için SSR paketini ve cookie yönetimini yapılandır.',
+    status: 'done',
+    priority: 'high',
+    due_date: new Date().toISOString().split('T')[0],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 't-4',
+    project_id: '22222222-2222-2222-2222-222222222222',
+    title: 'Gerçek Zamanlı CRUD & API İşlemleri',
+    description: 'Görev ekleme, filtreleme ve durum güncelleme işlemleri.',
+    status: 'in_progress',
+    priority: 'medium',
+    due_date: new Date(Date.now() + 345600000).toISOString().split('T')[0],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 't-5',
+    project_id: '33333333-3333-3333-3333-333333333333',
+    title: 'Karanlık Mod ve Glassmorphism Teması',
+    description: 'Kullanıcı dostu, modern ve zarif arayüz deneyimi.',
+    status: 'todo',
+    priority: 'low',
+    due_date: new Date(Date.now() + 604800000).toISOString().split('T')[0],
+    created_at: new Date().toISOString(),
+  },
+];
